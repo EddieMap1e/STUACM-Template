@@ -2519,6 +2519,7 @@ int get_sum(int x1,int y1,int x2,int y2)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="difference">差分</h4>
+
 > **一维差分**
 >
 > 对区间L-R的数进行多次加减操作
@@ -2762,6 +2763,7 @@ void out_num(vector<int> num)	//输出大整数
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="Discretization">离散化</h4>
+
 > 把无限空间有限的个体映射到有限的空间中去
 >
 > 可以是空间映射或者是大小映射
