@@ -110,6 +110,8 @@
 
 ​		[ST表](#ST)
 
+​		[对顶堆](#relative_top_heap)
+
 ---
 
 [**其他**](#orders)
@@ -132,7 +134,6 @@
 
 <h2 name="sort">排序</h2>
 <h4 name="selection_sort">选择排序</h4>
-
 > 从数列中取出最小/最大的,放到最前面
 >
 > 是**不稳定**的时间固定为$O(n^2)$,空间为$O(1)$的排序算法
@@ -155,7 +156,6 @@ void selection_sort()
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="bubble_sort">冒泡排序</h4>
-
 > 如其名,像冒泡一样每趟把大的上升到最后
 >
 > 是**稳定**的平均时间为$O(n^2)$,最优为$O(n)$,空间为$O(1)$的排序算法
@@ -182,7 +182,6 @@ void bubble_sort()
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="insert_sort">插入排序</h4>
-
 > 数列前面部分看作有序,依次将后面的元素**逆序**比较插入到前面的有序数列中,数据有序程度越高就越高效
 >
 > 是**稳定**的平均时间为$O(n^2)$,最优为$O(n)$,空间为$O(1)$的排序算法
@@ -202,7 +201,6 @@ void insert_sort()
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="shell_sort">希尔排序</h4>
-
 > 是插入排序的一个变体,通过不断跳跃划分小的组进行插入排序,使得总体上趋向有序
 >
 > 其时间复杂度与选用的**增量序列**有关,折半普遍认为时间平均是$O(n^{1.5})$,空间和时间最好是$O(n)$,是**不稳定**的
@@ -223,7 +221,6 @@ void shell_sort()
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="quick_sort">快速排序</h4>
-
 > 选择一个基准点,使得基准点左小右大,再对左右区间递归调用
 >
 > **平均**时间复杂度为$O(nlog_2n)$,最差的情况要到$O(n^2)$,有$O(log_2n)$的递归空间消耗
@@ -275,7 +272,6 @@ void quick_sort_list(node* left,node *right=nullptr)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="heap_sort">堆排序</h4>
-
 >利用堆这一种数据结构,把无序数组调整成堆,然后以堆顶和堆尾的交换来达到排序的目的
 >
 >是**不稳定**的时空复杂度固定为$O(nlog_2n)$的排序算法
@@ -312,7 +308,6 @@ void heap_sort()
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="merge_sort">归并排序</h4>
-
 > 把序列向下不断拆分成小的,直到只剩一个,然后向上把两个小的**有序**区间合并成一个大的
 >
 > 是**不稳定**的时空复杂度固定为$O(nlog_2n)$的排序算法
@@ -349,7 +344,6 @@ void merge_sort(int L,int R)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="count_sort">计数排序</h4>
-
 > 非比较排序,空间换时间,需要开取数组中$max-min$这么大的空间
 >
 > 时间复杂度是$O(n+k)$,计数排序可以看作是**稳定**的
@@ -373,7 +367,6 @@ void count_sort()
 
 <h2 name="dp">动态规划</h2>
 <h4 name="zero_one_pack">01背包</h4>
-
 > 有$N$件物品和一个容量为$V$的背包,放入第$i$件物品耗费的费用是$C_i$,得到的价值是$W_i$.求解将哪些物品装入背包可以使价值总和最大.
 
 > 定义状态:	$max\_value_{i,v}$为前$i$件物品放入容量为$v$的背包中的最大价值.
@@ -434,7 +427,6 @@ int zero_one_pack()
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="complete_pack">完全背包</h4>
-
 > 有$N$种物品和一个容量为$V$的背包,每种物品有无限件可用,放入第$i$件物品耗费的费用是$C_i$,得到的价值是$W_i$.求解将哪些物品装入背包可以使价值总和最大.
 
 > 根据01背包转移方程进行思考,那么转移方程为
@@ -479,7 +471,6 @@ int complete_pack()
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="multiple_pack">多重背包</h4>
-
 > 有$N$种物品和一个容量为$V$的背包,每种物品有$M_i$个可用,放入第$i$件物品耗费的费用是$C_i$,得到的价值是$W_i$.求解将哪些物品装入背包可以使价值总和最大.
 
 > 考虑第$i$种物品时
@@ -517,7 +508,6 @@ int multiple_pack()
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="lis">最长上升子序列</h4>
-
 > 给定一个序列,求数值严格单调递增的子序列长度最长是多少
 
 >**暴力dp**
@@ -592,7 +582,6 @@ int LIS(vector<int> a)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="lcs">最长公共子序列</h4>
-
 > 求给定两个序列s1,s2的最长公共子序列,并求得路径
 >
 > $lcs_{i,j}$表示s1中1..i且在s2中1..j的最长公共子序列长度
@@ -640,7 +629,6 @@ void get_LCS(int i,int j,string &s1,string &ans)	//i j初始传入n m且ans为�
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="lcis">最长公共上升子序列</h4>
-
 > **朴素版本**
 >
 > $lcis_{i,j}$表示以a中1..i且b中1..j的最长公共上升子序列的长度
@@ -706,7 +694,6 @@ int LCIS(vector<int> a,vector<int> b)		//要求序列下标从1开始
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="house_robber">打家劫舍</h4>
-
 >给定n间房屋内藏有的现金数,且不能盗取相邻的房屋,问最多能偷窃到的最高金额
 >
 >定义$dp_i$为第$i$间及之前可以盗取的最大价值数
@@ -737,7 +724,6 @@ int rob(vector<int> money)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="ms">记忆化搜索</h4>
-
 > 记忆化搜索本质是搜索的形式,动态规划的思想
 >
 > 一般来说记忆化搜索所需的记忆空间较大,优势在于有些逻辑不太好递推转移方程时候,搜索形式降低了难度
@@ -768,7 +754,6 @@ int ms(int pos)	//一般用一个答案类型作为函数返回值
 
 <h2 name="math">数论</h2>
 <h4 name="prime">筛法求素数</h4>
-
 > **素数定理**: n以内的质数个数约为$\dfrac{x}{lnx}$
 
 > 使用倍数筛法进行排除非素数,空间换时间
@@ -811,7 +796,6 @@ void get_primes(int n){
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="factorize">质因数分解</h4>
-
 > 每一个合数都可以写成多个质数相乘的形式
 
 > **直接分解法**	$O(\sqrt{n})$
@@ -858,7 +842,6 @@ int get_factorial_power_k_of_p(int n,int prime)	//n!的质因数p p^k 返回k
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="gcd">最大公约数</h4>
-
 > **欧几里得**求两个数的最大公约数
 >
 > 递归的层数最多是$gcd(Fib(n),Fib(n-1))$
@@ -897,7 +880,6 @@ int gcd(int a,int b)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="lcm">最小公倍数</h4>
-
 > 求两个数的最小公倍数
 
 ```C++
@@ -907,7 +889,6 @@ int gcd(int a,int b)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="exgcd">拓展欧几里得</h4>
-
 > 用来解决:
 > $$
 > gcd(a,b)=ax+by
@@ -936,7 +917,6 @@ int exgcd(int a,int b,int &x,int &y) //x y 用来储存结果	返回值为gcd(a,
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="quick_pow">快速幂</h4>
-
 > $$
 > A^B\%mod
 > $$
@@ -982,7 +962,6 @@ int quick_pow(int a,int b,int mod)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="euler_func">欧拉函数</h4>
-
 > 欧拉函数,一般记作$\phi(n)$,表示小于等于n的数中与n互质的数的个数
 
 > 如果 $n=p_1^{a_1}*p_2^{a_2}*...*p_m^{a_m}$ ,即$p_i$是n的质因数
@@ -1068,7 +1047,6 @@ void get_eulers(int neu)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="inv">逆元</h4>
-
 > 一个数x在模p的情况下的逆元
 
 > **费马小定理快速幂求逆元**
@@ -1104,7 +1082,6 @@ int inv(int a,int mod){
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="cmb_num">组合数</h4>
-
 > 1. $C_n^m=\dfrac{n!}{m!(n-m)!}$
 >
 > 2. $C_n^m=C_n^{n-m}$
@@ -1178,7 +1155,6 @@ int C(int n,int m,int p)	//p要为质数
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="permutation">排列数</h4>
-
 > 全排列组合
 >
 > **next_permutation**这个函数可以把一个序列进行全排列,其返回值是一个bool,如果还存在下一个排列方式就对序列进行更改并返回true,该函数还接受第二个参数传入一个自定义的compare函数
@@ -1219,7 +1195,6 @@ long long all_dislocation_arr(int n)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="catalan_num">卡特兰数</h4>
-
 > 卡特兰数相关公式
 >
 > 1. $H_n=\dfrac{C_{2n}^n}{n+1}$
@@ -1261,7 +1236,6 @@ vector<int> catalan(int n)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="week_day">星期X</h4>
-
 > 给出年月日,计算星期几
 
 > Kim Iarsen 公式
@@ -1294,7 +1268,6 @@ string get_week(int y,int m,int d)
 
 <h2 name="graph">图论</h2>
 <h4 name="graph_data">图的储存</h4>
-
 > **邻接矩阵**
 
 ```C++
@@ -1377,7 +1350,6 @@ void work()		//操作图
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="topo_sort">拓扑排序</h4>
-
 > 对于一个有向无环图G进行拓扑排序,将G所有顶点排成一个线性序列,使得图中任意一对顶点a和b,若边<a,b>∈edge,a一定出现在b之前
 
 > 通过bfs来进行排序
@@ -1413,7 +1385,6 @@ bool topo_sort(){
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="dfs">深度优先搜索</h4>
-
 > **dfs的一般形式**
 
 ```c++
@@ -1519,7 +1490,6 @@ bool graph_dfs(int x,int y)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="bfs">广度优先搜索</h4>
-
 > **bfs的一般形式**
 
 ```c++
@@ -1625,7 +1595,6 @@ int shortest_path()		//如果不可达 返回-1  否则返回最短距离
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="shortest_path">最短路径</h4>
-
 > **带权**图的最短路问题
 
 > **朴素Dijkstra**
@@ -1798,7 +1767,6 @@ void get_path(int u,int v,vector<pair<int,int>> &Path)	//获得从u到v的最短
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="min_span_tree">最小生成树</h4>
-
 > 带权连通图中总权值最小的生成树
 
 > **prim**
@@ -1946,7 +1914,6 @@ int hungary()	//求最大匹配数
 
 <h2 name="string">字符串</h2>
 <h4 name="kmp">KMP</h4>
-
 > $O(m+n)$的字符匹配,其中$m$是字符串的长度,$n$是匹配串的长度
 
 > **Next**数组预处理
@@ -1993,7 +1960,6 @@ int KMP_match(string s,string p)	//返回的是匹配成功的索引起点
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="Trie">Trie树</h4>
-
 > 单词查找树,利用字符串的公共前缀来减少查询时间
 >
 > 复杂度为$O(n)$
@@ -2046,7 +2012,6 @@ int trie_query_prefix(string s)	//查询该字符串的前缀的数量
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="string_hash">字符串哈希</h4>
-
 > **BKDR hash**
 >
 > 将字符串看成是P进制数字,P的选取是131 或13331冲突率较低
@@ -2076,7 +2041,6 @@ unsigned long long get_hash(int left,int right)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="longest_palindrome">最长回文子串</h4>
-
 > **枚举中心点**
 >
 > 对所有可能的中心点进行枚举,向两边扩展,复杂度为$O(n^2)$
@@ -2145,7 +2109,6 @@ int Manacher(string s)
 
 <h2 name="data_struct">数据结构</h2>
 <h4 name="m_queue">单调队列</h4>
-
 > **滑动窗口问题**
 >
 > 有一个大小为 *k* 的滑动窗口从数组的最左侧移动到数组的最右侧,只可以看到在滑动窗口内的 *k* 个数字,滑动窗口每次只向右移动一位.求滑动窗口中的最大值.
@@ -2198,7 +2161,6 @@ vector<int> window_max()
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="m_stack">单调栈</h4>
-
 > 栈内是单调的,用来解决如:
 >
 >  给定一个长度为N的整数数列,输出每个数左边第一个比它小的数,如果不存在则输出-1.
@@ -2225,7 +2187,6 @@ vector<int> m_stack()
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="union_find">并查集</h4>
-
 > **朴素并查集**
 >
 > 最坏情况当树退化成链的时候 每次的查询和合并操作都是$O(n)$的
@@ -2321,7 +2282,6 @@ void Union(int a,int b)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="binary_indexed_tree">树状数组</h4>
-
 > 一种进行动态维护前缀和的结构
 
 > 区间查询$O(logn)$和单点修改$O(logn)$
@@ -2433,7 +2393,6 @@ inline void init(){
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="ST">ST表</h4>
-
 > ST表用来处理一类区间问题,只要该区间符合性质: $f(L,R)=f(f(L,a),f(b,R))\;\;(a>=b)$
 >
 > 可知此处ab部分区间是有重叠的
@@ -2472,11 +2431,68 @@ int query(int l, int r)
 
 <a href="#top"><kbd>Top</kbd></a>
 
+<h4 name="relative_top_heap">对顶堆</h4>
+
+> 对顶堆可以动态维护中位数和动态第K大/小值等问题
+>
+> 本质是维护了一个大顶堆和一个小顶堆
+>
+> + 两个堆各自是单调的
+> + 大顶堆在下,小顶堆在上
+> + 保证小顶堆里面的元素都比大顶堆的要大
+> + 堆中元素只能不断动态增加
+
+> **动态中位数**
+
+```c++
+priority_queue<int> big;	//大顶堆
+priority_queue<int,vector<int>,greater<int>> small;	//小顶堆
+inline void add(int x)
+{
+    if(small.empty()||x>small.top())small.push(x);	//如果上面的小堆是空或者元素比分界线大
+    else big.push(x);								//先加入小堆 否则加入下面
+    //开始调整 保证上方的小堆大小大于等于下面大堆的大小 保证从上方取中位数
+    if((int)big.size()-(int)small.size()==1){		//下面比上面多了一个
+        small.push(big.top());	//把下面的移到上面去
+        big.pop();
+    }
+    else if((int)small.size()-(int)big.size()>1){	//上面的堆数量多了
+        big.push(small.top());
+        small.pop();
+    }
+}
+```
+
+> **动态第K小数**
+
+```c++
+int K=0;	//该K值先获取最值再增加 保证小顶堆恒有元素 获取时候保证下面的大堆的大小为K-1
+priority_queue<int> big;	//大顶堆
+priority_queue<int,vector<int>,greater<int>> small;	//小顶堆
+inline void add(int x)	//动态添加元素	此时无需调整
+{
+	if (small.empty() || x > small.top())small.push(x);
+	else big.push(x);
+}
+void adjust() {		//调整至下面的大堆大小为K-1
+	while (big.size() < K&&small.size()) {
+		big.push(small.top());
+		small.pop();
+	}
+	while (big.size() > K&&big.size()) {
+		small.push(big.top());
+		big.pop();
+	}
+}
+//数据应当保证adjust时元素数大于K
+```
+
+<a href="#top"><kbd>Top</kbd></a>
+
 ---
 
 <h2 name="orders">其他</h2>
 <h4 name="pre_sum">前缀和</h4>
-
 > **一维前缀和**
 >
 > 求区间L-R的区间和
@@ -2519,7 +2535,6 @@ int get_sum(int x1,int y1,int x2,int y2)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="difference">差分</h4>
-
 > **一维差分**
 >
 > 对区间L-R的数进行多次加减操作
@@ -2575,7 +2590,6 @@ void deal()		//把多次操作映射到原数组上
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="binary_check">整体二分</h4>
-
 > 在$log_2n$复杂度内,对**有序**的序列进行操作
 
 ```c++
@@ -2597,7 +2611,6 @@ int binary_check(int L,int R)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="big_int_oper">大整数运算</h4>
-
 > **比较函数**
 
 ```c++
@@ -2763,7 +2776,6 @@ void out_num(vector<int> num)	//输出大整数
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="Discretization">离散化</h4>
-
 > 把无限空间有限的个体映射到有限的空间中去
 >
 > 可以是空间映射或者是大小映射
@@ -2819,7 +2831,6 @@ void discretization()	//原数组下标应从1开始放标操作
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="bit">位运算</h4>
-
 > **lowbit**
 >
 > 一个数二进制最右边的1与后面的0组成的数
@@ -2830,9 +2841,34 @@ inline int lowbit(int x){
 }
 ```
 
+
+
 > 设置**最低位的1变为0**
 >
 > 直接通过公式: $x\&(x-1)$
+>
+> 因此可以得到一个数二进制1的个数
+
+```c++
+inline int num_of_1(int n){
+    int cnt=0;
+    while(n){
+        cnt++;
+        n=n&(n-1);
+    }
+    return cnt;
+}
+```
+
+
+
+> 预处理多个数的二进制1的个数
+
+```c++
+const int N;
+int cnt[N];
+for(int i=1;i<N;i++)cnt[i]=cnt[i>>1]+(i&1);
+```
 
 <a href="#top"><kbd>Top</kbd></a>
 
