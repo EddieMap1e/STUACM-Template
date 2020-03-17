@@ -1939,11 +1939,11 @@ void Next_pre(string p,vector<int> &Next)
 ```c++
 string s;	//待匹配字符串
 string pattern; //模式子串
-int KMP_match(string s,string p)	//返回的是匹配成功的索引起点
+int KMP_match(string s,string p,int begin)	//返回的是匹配成功的索引起点
 {
     vector<int> Next(p.length(),0);
     Next_pre(p,Next);	//预处理出跳转数组
- 	for(int i=0,j=0;i<(int)s.length();i++)
+ 	for(int i=begin,j=0;i<(int)s.length();i++)
     {
         while(j&&s[i]!=p[j])j=Next[j-1];	//当前匹配失败 跳转
         if(s[i]==p[j])j++;	//匹配成功 进行一下个
@@ -1954,6 +1954,7 @@ int KMP_match(string s,string p)	//返回的是匹配成功的索引起点
             return i-(int)p.length()+1;	//返回在s中匹配到的下标
         }
     }
+    return -1;	//匹配不成功
 }
 ```
 
