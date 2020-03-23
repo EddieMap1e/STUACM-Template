@@ -100,6 +100,8 @@
 
 [**数据结构**](#data_struct)
 
+​		[树的简单结构](#tree_base_info)
+
 ​		[单调队列](#m_queue)
 
 ​		[单调栈](#m_stack)
@@ -111,6 +113,8 @@
 ​		[ST表](#ST)
 
 ​		[对顶堆](#relative_top_heap)
+
+​		[线段树](#segment_tree)
 
 ---
 
@@ -133,7 +137,10 @@
 ---
 
 <h2 name="sort">排序</h2>
+
+
 <h4 name="selection_sort">选择排序</h4>
+
 > 从数列中取出最小/最大的,放到最前面
 >
 > 是**不稳定**的时间固定为$O(n^2)$,空间为$O(1)$的排序算法
@@ -366,7 +373,10 @@ void count_sort()
 ---
 
 <h2 name="dp">动态规划</h2>
+
+
 <h4 name="zero_one_pack">01背包</h4>
+
 > 有$N$件物品和一个容量为$V$的背包,放入第$i$件物品耗费的费用是$C_i$,得到的价值是$W_i$.求解将哪些物品装入背包可以使价值总和最大.
 
 > 定义状态:	$max\_value_{i,v}$为前$i$件物品放入容量为$v$的背包中的最大价值.
@@ -753,7 +763,10 @@ int ms(int pos)	//一般用一个答案类型作为函数返回值
 ---
 
 <h2 name="math">数论</h2>
+
+
 <h4 name="prime">筛法求素数</h4>
+
 > **素数定理**: n以内的质数个数约为$\dfrac{x}{lnx}$
 
 > 使用倍数筛法进行排除非素数,空间换时间
@@ -1267,7 +1280,10 @@ string get_week(int y,int m,int d)
 ---
 
 <h2 name="graph">图论</h2>
+
+
 <h4 name="graph_data">图的储存</h4>
+
 > **邻接矩阵**
 
 ```C++
@@ -1913,7 +1929,10 @@ int hungary()	//求最大匹配数
 ---
 
 <h2 name="string">字符串</h2>
+
+
 <h4 name="kmp">KMP</h4>
+
 > $O(m+n)$的字符匹配,其中$m$是字符串的长度,$n$是匹配串的长度
 
 > **Next**数组预处理
@@ -2109,7 +2128,135 @@ int Manacher(string s)
 ---
 
 <h2 name="data_struct">数据结构</h2>
+
+<h4 name="tree_base_info">树的简单结构</h4>
+
+> **二叉树** *Binary Tree	BT*
+>
+> + 每个节点最多有两个子树
+
+```c++
+struct BT{
+    type data;
+    BT *left;
+    BT *right;
+};
+```
+
+> **满二叉树** *Full Binary Tree	FBT*
+>
+> + 国内定义
+>     + 二叉树的层数为K 那么总结点数为$2^K-1$
+>     + 为金字塔型 无缺口的
+> + 国际定义
+>     + 二叉树的子节点要么为0 要么为2
+>         + 国际把国内定义的满二叉树叫做 **完美二叉树** *Perfect Binary Tree	PBT*
+
+> **完全二叉树** *Complete Binary Tree	CBT*
+>
+> + 叶子结点只可能在最深的两层出现
+> + 子节点数为1的节点只有1个或没有
+> + 1-n的节点与同样深度的满二叉树的1-n节点相互对应
+>
+> + 节点从1-n编号 如果i>1 那么该节点的父节点为i/2
+> + i>1 奇数节点是右节点 偶数节点是左节点
+> + 节点i的左孩子节点为2*i 右孩子节点为2*i+1
+> + i>n/2的节点均为叶子节点
+
+> **二叉查找树** *Binary Sort Tree	BST*
+>
+> + 若左子树不为空 那么左子树上节点的值均小于根节点
+> + 若右子树不为空 那么左子树上节点的值均大于根节点
+> + 左右子树也为二叉查找树
+> + 没有值相同的节点
+> + 中序遍历的结果是排序
+
+```c++
+//BST的查找 失败返回false
+bool BST_find(TreeNode* t,int v)
+{
+    if(!t)return false;
+    if(t->val==v)return true;
+    if(v<t->val)return BST_find(t->left);
+    if(v>t->val)return BST_find(t->right);
+}
+//BST的插入
+TreeNode* BST_INS(TreeNode* t,int v)
+{
+    if(!t)return TreeNode(v);	//空节点直接链接
+    if(v<t->val)t->left=BST_INS(t->left,v);		//要插入的节点肯定在左边
+    else if(v>t->val)t->right=BST_INS(t->right,v);		//要插入的节点肯定在右边
+    return t;
+}
+//BST的删除
+void BST_DEL(TreeNode* t,int v)
+{
+    if(!t)return nullptr;
+    if(v<t->val)BST_DEL(t->left,v);
+    else if(v>t->val)BST_DEL(t->right,v);
+    else{
+        //找到被删的节点
+        //不考虑空间的释放
+        //考虑空间的释放用递归返回节点或传入父亲节点做法
+        if(!t->left)*t=*(t->right);	//只有右节点 包含左右都为空的情况
+        else if(!t->right)*t=*(t->left);	//只有左节点
+        else {
+            //找到右边的最小节点
+            TreeNode* p=t;
+            TreeNode* x=p->right;	//肯定会有
+            while(x->left){
+                p=x;
+                x=x->left;
+            }
+            //循环结束时 p是x的父亲 x是最小节点
+            t->val=x->val;	//赋值后继节点
+            p->left=x->right;	//把节点删掉
+        }
+    }
+}
+```
+
+> **线索二叉树** *Threaded Binary Tree	TBT*
+>
+> 以某种遍历方式 在节点上利用空指针域来储存前驱或后继
+
+```c++
+//线索二叉树的结构
+struct TBT{
+    type data;
+    TBT *left;
+    TBT *right;
+    bool lTag;
+    bool rTag;
+    //tag为0时表示正常的左右子节点 为0时表示前驱或后继
+};
+```
+
+> 通过一次的遍历就能将其线索化
+
+```c++
+TreeNode* pre;	//全局指针 始终指向刚刚访问过的节点
+void in_threading(TreeNode* t)		//以中序遍历为例
+{
+    if(!t)return;
+    if(!t->left){
+        t->lTag=1;
+        t->left=pre;	//指向前驱;
+    }
+    else in_threading(t->left);
+    if(!t->right){
+        pre->rTag=1;
+        pre->right=t;
+    }
+    pre=t;	//前驱处理完毕
+    in_threading(t->right);	//注意和上面语句的顺序
+}
+```
+
+<a href="#top"><kbd>Top</kbd></a>
+
 <h4 name="m_queue">单调队列</h4>
+
 > **滑动窗口问题**
 >
 > 有一个大小为 *k* 的滑动窗口从数组的最左侧移动到数组的最右侧,只可以看到在滑动窗口内的 *k* 个数字,滑动窗口每次只向右移动一位.求滑动窗口中的最大值.
@@ -2490,10 +2637,152 @@ void adjust() {		//调整至下面的大堆大小为K-1
 
 <a href="#top"><kbd>Top</kbd></a>
 
+<h4 name="segment_tree">线段树</h4>
+
+> **最基础线段树**
+>
+> $O(logn)$单点修改	$O(logn)区间查询$
+>
+> 无lazy标记 递归版
+
+```c++
+//node的传值永远从根节点开始传	因为是递归写法
+const int n;	//数组的大小
+const int h;	//树的高度 为log2(n)+1
+vector<int> arr(n);	//举例下标从0开始
+vector<int> tree(2<<h-1);	//用数组来模拟数结构	化简之后约为n的四倍
+void build(int node,int start,int end)
+{
+    if(start==end){
+        tree[node]=arr[start];	//边界只有一个点
+        return;
+    }
+    int left_node=(node<<1)+1;
+    int right_node=(node<<1)+2;
+    int mid=(start+end)>>1;		//分段
+    build(left_node,start,mid);		//递归处理左边的
+    build(right_node,mid+1,end);	//递归处理右边的
+    tree[node]=tree[left_node]+tree[right_node];	//求总和 可以是其他操作
+}
+//单点在arr[idx]上改为val
+void update(int node,int start,int end,int idx,int val)
+{
+   	if(start==end){
+        arr[idx]=val;	 //可以是其他操作
+        tree[node]=val;	 //可以是其他操作
+        return;
+    }
+    //熟悉的获取左右子节点和中点
+    int left_node=(node<<1)+1;
+    int right_node=(node<<1)+2;
+    int mid=(start+end)>>1;
+    if(idx<=mid)update(left_node,start,mid,idx,val);	//要修改的点在左边
+    else update(right_node,mid+1,end,idx,val);	//右边
+    tree[node]=tree[left_node]+tree[right_node];	//更新时候全部更新总和 可以是其他操作
+}
+int query(int node,int start,int end,int L,int R)
+{
+    if(L>end||R<start)return 0;	//完全不在需求区间内
+    if(L<=start&&end<=R)return tree[node];	//该线段完全包含在需求区间内
+    //熟悉的获取左右子节点和中点
+    int left_node=(node<<1)+1;
+    int right_node=(node<<1)+2;
+    int mid=(start+end)>>1;
+    //此处L和R没必要修改
+    int sum_left=query(left_node,start,mid,L,R);	//求左边
+    int sum_right=query(right_node,mid+1,end,L,R);	//求右边
+    return sum_left+sum_right;	//可以是其他操作
+}
+```
+
+> **区间更新线段树**
+>
+> 操作为加和乘的示例
+>
+> 询问为求和的示例
+>
+> 两个lazy标记
+
+```c++
+const int n;
+vector<int> arr(n);	//arr下标从1开始方便处理
+struct{
+    int L,R;
+    int add_lazy=0;	//加的懒惰标记 初始化为0
+    int mul_lazy=1;	//乘的懒惰标记 初始化为1
+    int sum=0;
+}tree[4*n];		//公式化简后约为4倍空间
+#define now (tree[node])	//当前节点
+#define Lidx (node<<1)		//左子节点下标
+#define Ridx (node<<1|1)		//右子节点下标
+#define Lnode (tree[Lidx])		//左子节点
+#define Rnode (tree[Ridx])		//右子节点	
+void build(int node,int L,int R)
+{
+    now.L=L;
+    now.R=R;
+    if(L==R){	//到达叶子结点
+        now.sum=arr[L];
+        return;
+    }
+    int mid=(L+R)>>1;
+    build(Lidx,L,mid);	//分割左子节点建树
+    build(Ridx,mid+1,R);	//分割右子节点
+    now.sum=Lnode.sum+Rnode.sum;	//递归把下面的和传上来
+}
+void set_lazy(int node,int add_v,int mul_v)
+{
+    //对子节点都进行加add_v操作等于该节点的sum加上子节点长度乘上add_v
+    //对子节点都进行乘mul_v操作相当于该节点的sum直接乘上mul_v
+    now.sum=now.sum*mul_v+(now.R-now.L+1)*add_v;
+    //加的标记除了直接标记add_v还需要在进行乘法的时把之前标记的add_v进行乘
+    now.add_lazy=now.add_lazy*mul_v+add_v;
+    //乘的标记
+    now.mul_lazy*=mul_v;
+}
+void push_down(int node)
+{
+    if(now.L==now.R)return;	//叶子节点不需要下放
+    if(!now.add_lazy&&now.mul_lazy==1)return;	//无标记
+    //左右下放标记
+    set_lazy(Lidx,now.add_lazy,now.mul_lazy);
+    set_lazy(Ridx,now.add_lazy,now.mul_lazy);
+    //标记还原
+    now.add_lazy=0;
+    now.mul_lazy=1;
+}
+//只能进行单独加或者单独乘
+//加时mul_v传参为1 乘时add_v传参为0
+void update(int node,int L,int R,int add_v,int mul_v)
+{
+    if(L<=now.L&&now.R<=R){		//更新到想要的了
+        set_lazy(node,add_v,mul_v);	//直接设置懒惰标记 下面的子树不再遍历
+        return;
+    }
+    push_down(node);	//需要进行下放标记了
+    int mid=(now.L+now.R)>>1;
+    if(L<=mid)update(Lidx,L,R,add_v,mul_v);	//更新的区间包含左子节点区间
+    if(mid<R)update(Ridx,L,R,add_v,mul_v);	//更新的区间包含右子节点区间
+    now.sum=Lnode.sum+Rnode.sum;
+}
+int query(int node,int L,int R)
+{
+    if(L>now.R||now.L>R)return 0;	//超出所求范围
+    if(L<=now.L&&now.R<=R)return now.sum;	//找到要的完整被包含的区间
+    push_down(node);	//没找到 随着询问下放标记
+    return query(Lidx,L,R)+query(Ridx,L,R);
+}
+```
+
+<a href="#top"><kbd>Top</kbd></a>
+
 ---
 
 <h2 name="orders">其他</h2>
+
+
 <h4 name="pre_sum">前缀和</h4>
+
 > **一维前缀和**
 >
 > 求区间L-R的区间和
