@@ -48,6 +48,8 @@
 
 ​		[质因数分解](#factorize)
 
+​		[因数个数](#cnt_factor)
+
 ​		[最大公约数](#gcd)
 
 ​		[最小公倍数](#lcm)
@@ -95,6 +97,8 @@
 ​		[字符串哈希](#string_hash)
 
 ​		[最长回文子串](#longest_palindrome)
+
+​		[AC自动机](#Aho_Corasick_automaton)
 
 ---
 
@@ -808,6 +812,7 @@ const int n;
 vector<int> x(n+1,0); //n的最小质因数	
 vector<int> prime;	//质数表
 void get_primes(int n){
+    prime.clear();
     for(int i=2;i<=n;i++){
         if(!x[i]){
             x[i]=i;
@@ -829,16 +834,17 @@ void get_primes(int n){
 > **直接分解法**	$O(\sqrt{n})$
 
 ```c++
-vector<int> factors;	//存放分解的质因数
-void factorize(int n){
-    for(int i=2;i*i<=n;i++){
-        while(!(n%i)){	//当还能被当前质数整除时
-            factors.push_back(i);
-            n/=i;
-        }
-        if(n==1)return;	//1不是质数
-    }
-    if(n>1)factors.push_back(n);	//最后剩下他本身
+map<int,int> factors;	//存放分解的质因数 和 他的次方
+void factorize(int n) {
+    factors.clear();
+	for (int i = 2; i*i <= n; i++) {
+		while (!(n%i)) {	//当还能被当前质数整除时
+			factors[i]++;
+			n /= i;
+}
+		if (n == 1)return;	//1不是质数
+	}
+	if (n > 1)factors[n]++;	//最后剩下他本身
 }
 ```
 
@@ -846,11 +852,12 @@ void factorize(int n){
 
 ```c++
 vector<int> x;	//预处理最小质因数数组
-vector<int> factors;	//存放分解的质因数
-//get_primers(n);	//获得最小质因数数组	欧拉筛
+map<int,int> factors;	//存放分解的质因数
+//get_primes(n);	//获得最小质因数数组	欧拉筛
 void factorize(int n){
+    factors.clear();
     while(n>1){		//不断除最小质因数
-        factors.push_back(x[n]);
+        factors[x[n]]++;
         n/=x[n];
     }
 }
@@ -864,6 +871,30 @@ int get_factorial_power_k_of_p(int n,int prime)	//n!的质因数p p^k 返回k
     int k=0;
     while(n)k+=n/=prime;	//1*2*...*n 中含有n/p个p
     return k;
+}
+```
+
+<a href="#top"><kbd>Top</kbd></a>
+
+<h4 name="cnt_factor">因数个数</h4>
+
+> 一个数的质因数分解为
+>
+> $$a_1^{p_1}*a_2^{p_2}*a_3^{p_3}*...*a_n^{p_n}$$
+>
+> 那么这个数的因数个数为
+>
+> $$(p_1+1)*(p_2+1)*...*(p_n+1)$$
+
+```cpp
+map<int,int> factors;	//存放分解的质因数 和 他的次方
+//factorize(n);		//进行预处理
+int cnt_factors(int n)
+{
+    int cnt=1;
+    for(auto i:factors)
+    	cnt*=i.second+1;
+    return cnt;
 }
 ```
 
@@ -2040,7 +2071,7 @@ int KMP_match(string s,string p,int begin)	//返回的是匹配成功的索引�
 
 ```c++
 const int N;	//树的最大节点数
-const int M=26;	//数的子节点的数目 举例26为小写字母作为可能的子节点
+const int M=26;	//树的子节点的数目 举例26为小写字母作为可能的子节点
 vector<vector<int>> trie(N,vecotr<int>(M,0));	//trie树数组 存的是索引
 vector<int> cnt[N];	//储存终点节点的个数
 int idx=0;	//0是根节点且为空
@@ -2172,6 +2203,110 @@ int Manacher(string s)
     int ans=0;
     for(int i=0;i<len2;i++)ans=max(ans,p[i]);	//找到最长的长度
     return ans-1;
+}
+```
+
+<a href="#top"><kbd>Top</kbd></a>
+
+<h4 name="Aho_Corasick_automaton">AC自动机</h4>
+
+> **多模式匹配**
+>
+> 通过公共后缀来进行匹配失败时候的跳转 **因为模式串在字符串中可重叠出现**
+>
+> 利用了trie树和类KMP的思想 可以近似看作在trie树上的kmp匹配
+>
+> 复杂度$O(n)$
+>
+> **构建fail指针**
+>
+> + 第一层的全部指向root
+> + 通过BFS遍历后面的节点 **因为跳转是从长到短的**
+> + 如果**当前节点x的父节点f的fail指针**拥有和当前节点**一样字符**的节点y 那么x的fail指向y
+>
+> **匹配**
+>
+> + 从根节点出发
+> + 正常的trie树匹配过程 遇到节点就把以该节点为结尾的模式串添加计数到答案中
+>     + 每次添加计数都要把该节点的fail链上的计数都遍历添加了
+>     + 如 s:  abcde p: abcde bcde cde de e 那么在匹配到e的时候应该要通过fail链把五个都加上 
+> + 匹配失败的时候 (没有了相同字符的孩子)
+>     + 进行跳转 如果跳转后的有相同字符的孩子就进入它
+>     + 直到进入了或者到根节点了
+> + 直到字符串遍历完成
+
+> 给定n个pattern 和 s 求s中出现了多少个pattern **(重复的不算)**
+>
+> patterns的字符总长为m	只有小写字母
+
+```cpp
+const int n;
+const int m;	//用模式串来建树 m其实就是节点数
+vector<string> patterns(n);	//模式串
+string s;	//文本串
+struct TrieNode{
+    int son[26]={0};	//此处只有小写字母
+    int cnt=0;
+    int fail=-1;	//-1表示没有fail指针
+};
+vector<TrieNode> trie(m);	//数组模拟 预先分配空间
+int idx=0;
+void insert(string s)	//trie的插入 详见字典树
+{
+    int p=0;
+    for(int i=0;i<s.size();i++)
+    {
+        int word=s[i]-'a';
+        if(!trie[p].son[word])trie[p].son[word]=++idx;
+        p=trie[p].son[word];
+    }
+    trie[p].cnt++;
+}
+void fail_pre()
+{
+    queue<int> q;	//BFS预处理
+    for(int i=0;i<26;i++)	//先把第一层的处理掉
+    	if(trie[0].son[i]){
+            trie[trie[0].son[i]].fail=0;	//第一层的fail全部指向根节点
+            q.push(trie[0].son[i]);	//压入队列bfs
+        }
+    while(q.size())
+    {
+        int p=q.front();	//拿出一个节点 这个节点的那层fail已处理
+        q.pop();
+        for(int i=0;i<26;i++)
+        	if(trie[p].son[i]){	//遍历所有儿子
+                int son=trie[p].son[i];	//儿子的索引
+                int pfail=trie[p].fail;	//父亲的fail指向的那个节点
+                while(~pfail&&!trie[pfail].son[i])pfail=trie[pfail].fail;	//终止条件为跳到了root (只有root没有fail) 或者 找到了可以进入的节点
+                if(~pfail)trie[son].fail=trie[pfail].son[i];	//如果找到了 连接fail指针
+                else trie[son].fail=0;	//没有找到只能指向根节点
+                q.push(son);	//记得加入队列继续
+            }
+    }
+}
+int query(string s)
+{
+    int ans=0;
+    int p=0;
+    for(int i=0;i<s.size();i++)
+    {
+        int word=s[i]-'a';
+        while(!trie[p].son[word]&&~trie[p].fail)p=trie[p].fail;	//如果匹配不到就一直跳转 直到到了根节点(只有根节点没有fail)
+        if(trie[p].son[word])
+            p=trie[p].son[word];	//如果匹配到了就进入节点
+        else continue;	//没有匹配到那此时p肯定在root 可以去匹配下一个了文本字符了
+        int p2=p;
+        while(~trie[p2].fail&&~trie[p2].cnt){
+            //把fail链上的全部都给加上
+            ans+=trie[p2].cnt;
+            trie[p2].cnt=-1;
+            //题目要求 匹配过的串下次不用再匹配了
+            //此处置为-1而不是0就可以在一开始就终止整条fail链的跳转
+            p2=trie[p2].fail;
+        }
+    }
+    return ans;
 }
 ```
 
