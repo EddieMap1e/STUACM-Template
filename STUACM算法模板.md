@@ -20,6 +20,8 @@
 
 ​		[计数排序](#count_sort)
 
+​		[桶排序]()
+
 ---
 
 [**动态规划**](#dp)
@@ -129,6 +131,8 @@
 [**几何**](#geometry)
 
 ​		[判断圆和矩形是否重叠](#overlap)
+
+​		[圆覆盖最多点问题](#circle_cover_points)
 
 ---
 
@@ -293,13 +297,72 @@ void quick_sort_list(node* left,node *right=nullptr)
 <a href="#top"><kbd>Top</kbd></a>
 
 <h4 name="heap_sort">堆排序</h4>
+> **堆**
+>
+> + 是一棵完全二叉树
+> + 树根永远为最大/最小
+> + 子树也是堆
+
+```cpp
+#define parent (root>>1)
+#define left (root<<1)
+#define right (left|1)
+template<typename T>
+class minHeap {
+public:
+	int size;
+	minHeap()
+	{
+		size = 0;
+		T empty;
+		v.push_back(empty);
+	}
+	void push(const T &elem)
+	{
+		size++;
+		v.push_back(elem);
+		int root = size;
+		while (parent&&v[root] < v[parent])
+		{
+			swap(v[root], v[parent]);
+			root = parent;
+		}
+	}
+	void pop()
+	{
+		swap(v[1], v[size]);
+		v.pop_back();
+		size--;
+		int root = 1;
+		while (left<=size)
+		{
+			int now = left;
+			if (right <= size && v[right] < v[left])now = right;
+			if (v[root] < v[now])break;
+			swap(v[root], v[now]);
+			root = now;
+		}
+	}
+	T top() const
+	{
+		return v[1];
+	}
+	void print() const {
+		for (int i = 1; i <= size; i++)cout << v[i] << " ";
+	}
+private:
+	vector<T> v;
+};
+```
+
 >利用堆这一种数据结构,把无序数组调整成堆,然后以堆顶和堆尾的交换来达到排序的目的
 >
 >是**不稳定**的时空复杂度固定为$O(nlog_2n)$的排序算法
 
 ```c++
+//以下是构建大顶堆 所以排序好的是升序的
 const int n;
-vector<int> arr(n);	//待排序数组	下标从1开始
+vector<int> arr(n+1);	//待排序数组	下标从1开始
 void heap_adjust(int root,int end)	//root代表当前的需要调整的节点 root+1到end 都已调整好
 {
     int top=arr[root];		//当前子堆的顶端
@@ -318,6 +381,7 @@ void build_heap()
 }
 void heap_sort()
 {
+	build_heap();
     //已经建堆完成
     for(int i=n;i>1;i--){
         swap(arr[1],arr[i]);	//将堆顶和堆尾交换
@@ -841,7 +905,7 @@ void factorize(int n) {
 		while (!(n%i)) {	//当还能被当前质数整除时
 			factors[i]++;
 			n /= i;
-}
+		}
 		if (n == 1)return;	//1不是质数
 	}
 	if (n > 1)factors[n]++;	//最后剩下他本身
@@ -894,6 +958,22 @@ int cnt_factors(int n)
     int cnt=1;
     for(auto i:factors)
     	cnt*=i.second+1;
+    return cnt;
+}
+```
+
+> **暴力计算**
+
+```cpp
+int cnt_factors(int n)
+{
+    int m=sqrt(n);	//上限
+    int cnt=0;
+    for(int i=1;i<=m;i++)	//去找所有因子
+        if(n%i==0){
+            cnt++;	//发现一个因子
+            if(n/i!=i)cnt++;	//只要不是平方数 那么肯定有另一个因子
+        }
     return cnt;
 }
 ```
@@ -1442,7 +1522,7 @@ bool topo_sort(){
             if(--in[b]==0)q.push(b);	//b剔除掉边ab 入度-1 假如入度减到0 加入队列
         }
     }
-    return a.size()==n;		//如果所有点都入队了,说明存在拓扑排序,否则不存在
+    return topo.size()==n;		//如果所有点都入队了,说明存在拓扑排序,否则不存在
 }
 ```
 
@@ -1665,7 +1745,7 @@ int shortest_path()		//如果不可达 返回-1  否则返回最短距离
 >
 > 有向图中求一个点与其他点的最短距离,即单源最短路,且边权重只能为**正**
 >
-> 时间复杂度为$O(n^2+m)$,$n$为节点数,$m$为边数
+> 时间复杂度为$O(n^2)$,$n$为节点数,$m$为边数
 
 ```c++
 int n;	//节点数
@@ -1677,17 +1757,17 @@ vector<int> dijkstra()	//0号节点作为起点
     vector<bool> visited(n,false);	//初始化访问标记
  	dis[0]=0;	//0号点自身
     for(int i=0;i<n-1;i++){	//处理全部点 最后的点不用处理
-        int min_dis=-1;	//哪个点当前与起点最近
+        int node=-1;	//哪个点当前与起点最近
         for(int j=0;j<n;j++)
-            if(!visited[j]&&(min_dis==-1||dis[min_dis]>dis[j]))
-                min_dis=j;	//寻找未处理过的点中距离最短的点
-        for(int j=0;j<n;j++)	//用min_dis的点去更新点
-            //dis[j]=min(dis[j],dis[min_dis]+G[min_dis][j]);
-            if(dis[min_dis]+G[min_dis][j]<dis[j]){
-                dis[j]=dis[min_dis]+G[min_dis][j];
-                path[j]=min_dis;
+            if(!visited[j]&&(node==-1||dis[node]>dis[j]))
+                node=j;	//寻找未处理过的点中距离最短的点
+        for(int j=0;j<n;j++)	//用node的点去更新点
+            //dis[j]=min(dis[j],dis[node]+G[node][j]);
+            if(dis[node]+G[node][j]<dis[j]){
+                dis[j]=dis[node]+G[node][j];
+                path[j]=node;
             }
-        visited[min_dis]=true;	//标记为已访问
+        visited[node]=true;	//标记为已访问
     }
     return dis;
 }
@@ -1706,7 +1786,7 @@ void get_path(int x,vector<int> &Path)
 >
 > 使用邻接表存图
 >
-> 时间复杂度$O(mlogn)$,$n$为节点数,$m$为边数
+> 时间复杂度$O(mlogm)$,$m$为边数
 
 ```c++
 const int n,m;	//n个节点 m条边
@@ -1726,7 +1806,6 @@ vector<int> dijkstra()	//0号节点作为起点
         int node=heap.top().second;	//取出堆顶的点
         heap.pop();
         if(visited[node])continue;	//如果已经更新过就不用了
-        visited[node]=true;
         for(int i=head[node];~i;i=Next[i]){
             int now_node=edge[i],w=weight[i];
             if(dis[now_node]>dis[node]+w){	//可以更新
@@ -1734,6 +1813,7 @@ vector<int> dijkstra()	//0号节点作为起点
                 heap.push({dis[now_node],now_node});
             }
         }
+        visited[node]=true;
     }
     return dis;
 }
@@ -3095,6 +3175,60 @@ bool checkOverlap(double r,double x,double y,double x1,double y1,double x2,doubl
     y = fabs(y-y_center);
     double dx = max(x-x2,0.0), dy = max(y-y2,0.0);
     return dx*dx+dy*dy <= r*r;
+}
+```
+
+<a href="#top"><kbd>Top</kbd></a>
+
+<h4 name="circle_cover_points">圆覆盖最多点问题</h4>
+
+> 给定一个**半径为r**的圆
+>
+> 给定一些**点的坐标($x_i,y_i$)**
+>
+> 求圆能覆盖最多点的个数
+
+> **暴力枚举圆**
+>
+> + 最优解的圆是可移动的
+> + 必定可以移动到某两个或以上点在最优圆的边缘上
+> + 枚举这两个点在固定半径圆边缘上的圆心位置
+> + 暴力循环看在这两个点生成的圆有多少个点在里面
+> + 计算圆心位置根据勾股定律和三角函数可算得
+
+```cpp
+struct Point{
+    double x,y;
+    Point(double x_,double y){x=x_;y=y_;}
+};
+vector<Point> points;
+int r;	//半径
+int n;	//点数
+inline double dist(Point a,Point b)
+{
+    return sqrt(pow(a.x-b.x,2)+pow(a.y-b.y,2));	//欧几里得距离
+}
+Point getCenter(Point a,Point b)	//重点
+{
+    Point mid=Point((a.x+b.x)/2,(a.y+b.y)/2);	//中点
+    double theta=atan2(a.x-b.x,b.y-a.y);	//把y分量向量反向 模板背就行
+    double d=sqrt(r*r-pow(dist(a,mid),2));	//ab直线和圆心的距离
+    return Point(mid.x+d*cos(theta),mid.y+d*sin(theta));
+}
+int numPoints()
+{
+    int ans=1;	//最少有一个点
+    for(int i=0;i<n;i++)	//遍历两个相同的点时由于顺序不同 会把两个方向的圆都考虑
+        for(int j=0;j<n;j++)
+        {
+            if(dist(points[i],points[j])>2.0*r)continue;	//不可能
+            Point center=getCenter(points[i],points[j]);
+            int cnt=0;
+            for(int k=0;k<n;k++)	//暴力计数
+                if(dist(center,points[k])<=1.0*r+1e-8)cnt++;	//注意误差
+            ans=max(ans,cnt);
+        }
+    return ans;
 }
 ```
 
