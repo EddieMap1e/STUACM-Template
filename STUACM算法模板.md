@@ -1,4 +1,4 @@
-<h1 name="top" style="color:red">Algorithm</h1>
+<h1 name="top" style="color:red">STUACM Algorithm</h1>
 
 ---
 
@@ -1950,6 +1950,8 @@ void floyd_2()
 
 > **prim**
 >
+> 每次找到与MST最近的节点纳入MST
+>
 > 复杂度$O(n^2+m)$
 
 ```c++
@@ -1995,7 +1997,7 @@ struct edge{
 vector<edge> edges(m);
 int Kruskal()	//如果无法生成树返回无穷大
 {
-    sort(edges,edges+m);		//按权重从小到大排序
+    sort(edges.begin(),edges.begin()+m);		//按权重从小到大排序
     init();	//初始化并查集
     int ans=0;	//总权值
     int cnt=0;	//生成树有多少条边
