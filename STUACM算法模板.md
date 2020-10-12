@@ -1488,6 +1488,75 @@ int shortest_path()		//如果不可达 返回-1  否则返回最短距离
 }
 ```
 
+## 树的直径
+
+### BFS/DFS
+
+> 两次搜索
+>
+> 第一次从任意一个点a出发进行搜索 找到离他最远的点x
+>
+> 然后从x出发 进行第二次搜索 找到离他最远的点y
+>
+> xy的路径就是树的直径
+
+> 证明  从一个点出发必定能走到最远的为x或者y点
+>
+> 假设其走到最远点为z点 那么显然有xz或yz的路径长度大于xy
+>
+> 这样就与假设xy为直径不符合了
+
+```cpp
+int n;	//点的数量
+vector<vector<int>> G;	//邻接表
+vector<bool> vis;
+int d=0,node=-1;	//直径长度和xy点
+void dfs(int x,int len)
+{
+    if(vis[x])return;
+    if(len>d){
+        d=len;	//更新直径  第二次有用
+        node=x;	//更新最远的点 第一次有用
+    }
+    vis[x]=true;
+    for(int i=0;i<G[x].size();i++)
+        dfs(G[x][i],len+1);	//如果该树有权值的话  len+1 改为len+两点的权值
+}
+int getTreeD(){
+    dfs(a,0);	//从任意点a出发
+	dfs(node,0);	//从最远点出发
+	return d;
+}
+```
+
+### 树形dp
+
+> + 先取任意点为根 通常取0号点
+> + 定义`dp[x]`为 以x为根节点的子树 (子树是相对上一步选取的根节点的) 的高度
+> + 显然高度可以递归来获取
+> + 在更新高度的同时 (记住 是同时)  可能某个节点x的`dp[x]`会经过另一条分支递归回来 从而比原来的`dp[x]`要大 那么这时候显然原来的高度值为次大值 现在的为最大值  那么此时定义`d[x]`为经过x节点的最长链长度 `d[x]=dp[x]'+dp[x]`
+> + 最终的答案树的直径即为 `d=max{d[i]}(1<=i<=n)`
+
+```cpp
+vector<vector<int>> G,w;	//邻接表和权值
+vector<bool> vis;	//假如把图建成有根有向 则不需要这个
+vector<int> dp,d;
+int ans=0;
+void dfs(int x){
+    if(vis[x])return;
+    vis[x]=true;
+    for(int i=0;i<G[x].size();i++){
+        int &y=G[x][i];
+        dfs(y);
+        if(dp[y]+w[x][y]>dp[x]){	//y这条路径比原来的长
+            d[x]=dp[x]+dp[y]+w[x][y];	//更新一下次大和最大形成的链
+            dp[x]=dp[y]+w[x][y];	//记得先更新d再更新dp
+            ans=max(ans,d[x]);
+        }
+    }
+}
+```
+
 ## 最短路径
 
 ### 朴素dijkstra
