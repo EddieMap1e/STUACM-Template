@@ -755,7 +755,7 @@ void factorize(int n) {
 
 ### 预处理最小质因数法
 
-> $O(log\,n)$
+> $O(log\,n)$   其中$O(n)$是欧拉筛预处理的
 
 ```c++
 vector<int> x;	//预处理最小质因数数组
@@ -871,14 +871,14 @@ int gcd(int a,int b)
 > $$
 > gcd(a,b)=ax+by
 > $$
-> 其中系数x和y的求解
+> 其中系数x和y的求解  此处ab均大于0  显然正负可以由系数决定
 
 ```c++
 int exgcd(int a,int b,int &x,int &y) //x y 用来储存结果	返回值为gcd(a,b)
 {
     if(!b){
         x=1,y=0;	//递归终点x=1,y=0
-        return b;
+        return a;
     }
     int d=exgcd(b,a%b,y,x);	//进入递归时候会交换x,y位置
     y-=(a/b)*x;		//公式
@@ -886,9 +886,9 @@ int exgcd(int a,int b,int &x,int &y) //x y 用来储存结果	返回值为gcd(a,
 }
 ```
 
-> 对于$ax+by=d$,当且仅当$d=k*gcd(a,b)$时候有解
+> 对于$ax+by=d$,当且仅当$d=k*gcd(a,b)$时候有解  解为（kx，ky）
 >
-> 设该方程的一个解为$(x_0,y_0)$,那么$(x_0+k*\dfrac{b}{gcd(a,b)},y_0+k*\dfrac{a}{gcd(a,b)})$也为该方程的一个解
+> 设该方程的一个解为$(x_0,y_0)$,那么$(x_0-k*\dfrac{b}{gcd(a,b)},y_0+k*\dfrac{a}{gcd(a,b)})$也为该方程的一个解
 >
 > k为任意整数
 
@@ -1042,7 +1042,9 @@ int inv(int a,int mod){
 
 > $a*inv(a)=1(mod\;p)$ 令$inv(a)=x$
 >
-> $ax*inv(a)=1+py$	p是未知的系数
+> $ax=1+py$	p是未知的系数
+>
+> $ax-py=1$
 >
 > 显然上式可以用扩展欧几里得计算出系数x和y
 
@@ -1171,9 +1173,11 @@ long long all_dislocation_arr(int n)
 
 ## 卡特兰数
 
+>  1, 1, 2, 5, 14, 42, 132, 429, 1430....
+
 > 卡特兰数相关公式
 >
-> 1. $H_n=\dfrac{C_{2n}^n}{n+1}$
+> 1. $H_n=\dfrac{C_{2n}^n}{n+1}=C_{2n}^n-C_{2n}^{n-1}$
 > 2. $H_n=\dfrac{4n-2}{n+1}*H_{n-1}\;\;H_{0,1}=1$
 > 3. $H_n=\sum_{i=1}^nH_{i-1}H_{n-i}\;(n\gt1)\;\;\;\;H_{0,1}=1$
 
@@ -2234,6 +2238,36 @@ int query(string s)
 
 # 数据结构
 
+## 哈希双向链表
+
+> 真正意义上实现O（1）的删除和插入
+>
+> 通过哈希表的直接查键
+
+```cpp
+struct node{		//普普通通的双向链表结构
+    int val;
+    node *next,*last;
+    node(int v){
+        val=v;
+        next=last=nullptr;
+    }
+};
+unordered_map<int,node*> List;	//链表
+List[-1]=new node(0);	//把一个特殊键值设为空头节点 prehead
+void Insert(int key,int nowKey,int x){	//在key的后面插入一个key为nowKey值为x的节点
+    //注意 第一个节点插入时 key为prehead的值 这里为-1
+    node* newNode=new node(x);
+    List[nowKey]=newNode;	//创造新的节点
+    List[newNode]->next=List[key]->next;
+    List[key]->next=newNode;	//链表上更改链接
+}
+void Delete(int key){	//删除掉key为key这个节点
+    List[key]->last->next=List[key]->next;
+    delete List[key];	//释放内存
+}
+```
+
 ## 树的简单结构
 
 > **二叉树** *Binary Tree	BT*
@@ -2641,6 +2675,31 @@ void Union(int a,int b)
         size[fa]+=size[fb];
         f[fb]=fa;	//此时高度合并后的肯定不会超出h[fa]
     }
+}
+```
+
+### 维护链长的路径压缩并查集
+
+> 维护元素到根节点的长度	(抽象成为一条链  与实际的树不一样)
+>
+> 合并的时候把原来的根的链长从0加上要移到的集合的大小 (即抽象链 实际上是以树直接接到另一个集合的根的)
+>
+> 查询的时候 每个元素都加上其祖先节点的链长即可 (一定要先往祖先节点搜索完)
+
+```cpp
+vector<int> f,dis,cnt;	//祖先 到根的距离 集合的大小
+int find(int x){
+    if(f[x]==x)return x;
+    int root=find(f[x]);
+    dis[x]+=dis[f[x]];	//这时候x的祖先的长度已经算好了
+    return f[x]=root;
+}
+void Union(int a,int b){
+    int fa=find(a),fb=find(b);
+    if(fa==fb)return;
+    dis[fa]=cnt[fb];	//加上另一个集合大小 原来作为根是0
+    cnt[fb]+=cnt[fa];	//改掉集合大小 不能和上面语句顺序交换
+    f[fa]=fb;	//合并
 }
 ```
 
