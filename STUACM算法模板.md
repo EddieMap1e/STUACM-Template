@@ -1056,7 +1056,7 @@ int inv(int a,int mod){
 }
 ```
 
-### 组合数
+## 组合数
 
 > 1. $C_n^m=\dfrac{n!}{m!(n-m)!}$
 > 2. $C_n^m=C_n^{n-m}$
@@ -3701,3 +3701,14 @@ for(int sub=S;sub;sub=(sub-1)&S)
 
 且集合总大小较小(<20)
 
+可以用位运算枚举出所有情况
+
+## 闰年
+
+> 闰年是指年份能被4整除但是不能被100整除  或者是直接能被400整除的年份
+
+```cpp
+bool isLeapYear(int year){
+    return (year%100!=0&&year%4==0)||(year%400==0);
+}
+```
